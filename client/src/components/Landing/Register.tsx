@@ -5,6 +5,8 @@ import { colors } from '../../style/style.constants'
 import Checkbox from '../General/Checkbox'
 import TextInput from '../General/TextInput'
 
+import useRegister from '../../hooks/useRegister'
+
 const Container = styled.div({
   width: '100%',
   opacity: 0,
@@ -25,7 +27,7 @@ const Heading = styled.h2({
 const Form = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  padding: 20,
+  padding: '10px 20px 20px',
   width: '100%',
   div: {
     display: 'flex',
@@ -40,6 +42,17 @@ const Form = styled.div({
     letterSpacing: 0.1,
     backgroundColor: colors.primary[500],
   },
+})
+
+const RegisterButton = styled.button({
+  padding: 20,
+  borderRadius: 5,
+  color: colors.white,
+  textAlign: 'center',
+  fontWeight: 600,
+  fontSize: 14,
+  letterSpacing: 0.1,
+  backgroundColor: colors.primary[500],
 })
 
 const TermsContainer = styled.div({
@@ -61,6 +74,18 @@ const LoginSwitch = styled.p({
   },
 })
 
+const ErrorWindow = styled.div({
+  backgroundColor: colors.warning[500],
+  color: colors.white,
+  fontSize: 16,
+  textAlign: 'center',
+  padding: 5,
+  opacity: 0,
+  minHeight: 26,
+  borderRadius: 12,
+  marginTop: 5,
+})
+
 interface RegisterProps {
   click: () => void
 }
@@ -72,8 +97,11 @@ const Register = (props: RegisterProps) => {
   const [lastName, setLastName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const { signup, error, isLoading } = useRegister()
 
-  const RegisterUser = () => {}
+  const handleRegisterUser = async () => {
+    await signup(firstName, lastName, email, password, terms)
+  }
 
   useEffect(() => {
     gsap.fromTo(
@@ -90,11 +118,25 @@ const Register = (props: RegisterProps) => {
     )
   }, [])
 
-  const toggleTerms = () => setTerms(!terms)
+  useEffect(() => {
+    if (error !== null) {
+      gsap.to('.error', {
+        opacity: 1,
+        duration: 0.2,
+      })
+    }
+    if (error === null) {
+      gsap.to('.error', {
+        opacity: 0,
+        duration: 0.2,
+      })
+    }
+  }, [error])
 
   return (
     <Container className='register-container'>
       <Heading>Register to use the Arcane Arsenal</Heading>
+      <ErrorWindow className='error'>{error}</ErrorWindow>
       <Form>
         <div>
           <TextInput
@@ -120,7 +162,8 @@ const Register = (props: RegisterProps) => {
         />
         <TermsContainer>
           <Checkbox
-            onClick={toggleTerms}
+            onChange={() => setTerms(!terms)}
+            checked={terms}
             label={
               <p>
                 I accept the{' '}
@@ -130,7 +173,11 @@ const Register = (props: RegisterProps) => {
             }
           />{' '}
         </TermsContainer>
-        <button>Complete Registration</button>
+        <RegisterButton
+          onClick={handleRegisterUser}
+          disabled={isLoading}>
+          Complete Registration
+        </RegisterButton>
         <br />
         <LoginSwitch>
           Already have an account?{' '}

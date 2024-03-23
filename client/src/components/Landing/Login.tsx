@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import gsap from 'gsap'
 import { useEffect, useState } from 'react'
+import { useLogin } from '../../hooks/useLogin'
 import { colors } from '../../style/style.constants'
 import Checkbox from '../General/Checkbox'
 import FacebookButton from '../General/FacebookButton'
@@ -89,6 +90,18 @@ const ForgotButton = styled.div({
   color: colors.greys.light,
 })
 
+const ErrorWindow = styled.div({
+  backgroundColor: colors.warning[500],
+  color: colors.white,
+  fontSize: 16,
+  textAlign: 'center',
+  padding: 5,
+  opacity: 0,
+  minHeight: 26,
+  borderRadius: 12,
+  marginTop: 5,
+})
+
 interface LoginProps {
   click: () => void
 }
@@ -98,10 +111,11 @@ const Login = (props: LoginProps) => {
   const [remember, setRemember] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const { login, error, isLoading } = useLogin()
 
-  const toggleRemember = () => setRemember(!remember)
-
-  const loginUser = () => {}
+  const handleLoginUser = async () => {
+    await login(email, password)
+  }
 
   useEffect(() => {
     gsap.fromTo(
@@ -118,9 +132,26 @@ const Login = (props: LoginProps) => {
     )
   }, [])
 
+  useEffect(() => {
+    console.log(error)
+    if (error !== null) {
+      gsap.to('.error', {
+        opacity: 1,
+        duration: 0.2,
+      })
+    }
+    if (error === null) {
+      gsap.to('.error', {
+        opacity: 0,
+        duration: 0.2,
+      })
+    }
+  }, [error])
+
   return (
     <Container className='login-container'>
       <Heading>Log in to Your Account</Heading>
+      <ErrorWindow className='error'>{error}</ErrorWindow>
       <Form>
         <TextInput
           type='text'
@@ -135,7 +166,7 @@ const Login = (props: LoginProps) => {
         <Remember>
           <div>
             <Checkbox
-              onClick={toggleRemember}
+              onChange={() => setRemember(!remember)}
               label='Remember Me'
             />
           </div>
@@ -143,7 +174,11 @@ const Login = (props: LoginProps) => {
             <a>Forgot my Password</a>
           </ForgotButton>
         </Remember>
-        <LoginButton>Login</LoginButton>
+        <LoginButton
+          onClick={handleLoginUser}
+          disabled={isLoading}>
+          Login
+        </LoginButton>
         <Divider>
           <p>OR</p>
         </Divider>

@@ -1,48 +1,44 @@
-import mongoose, { Schema, model, Model } from 'mongoose'
-import validator from 'validator'
 import bcrypt from 'bcrypt'
+import { Model, Schema, model } from 'mongoose'
+import validator from 'validator'
 
 export interface Iuser {
-  userName: string,
-  email: string,
-  password: string,
-  avatarURL?: string,
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  avatarURL?: string
 }
 
-export interface IuserMethods extends Model<Iuser>{
-  signUp: (
-    userName: string,
-    email: string,
-    password: string,
-    confirmPassword: string
-  ) => Promise<any>
-  logIn: (
-    email: string,
-    password: string
-  ) => Promise<any>
+export interface IuserMethods extends Model<Iuser> {
+  signUp: (firstName: string, lastName: string, email: string, password: string) => Promise<any>
+  logIn: (email: string, password: string) => Promise<any>
   updateProfile: (
-    userName: string,
+    firstName: string,
+    lastName: string,
     email: string,
     password: string,
-    confirmPassword: string,
     avatarURL: string
   ) => Promise<any>
 }
 
 export const userSchema = new Schema<Iuser>({
-  userName: { type: String, required: true},
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  avatarURL: { type: String, required: false }
+  avatarURL: { type: String, required: false },
 })
 
-userSchema.statics.signUp = async function (userName:string, email: string, password: string, confirmPassword: string) {
+userSchema.statics.signUp = async function (
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string
+) {
   // validation
   if (!email || !password) {
     throw Error('All Fields must be filled')
-  }
-  if (password !== confirmPassword) {
-    throw Error('passwords do not match')
   }
   if (!validator.isEmail(email)) {
     throw Error('Email is not valid')
@@ -59,7 +55,7 @@ userSchema.statics.signUp = async function (userName:string, email: string, pass
 
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
-  const user = await this.create({ userName, email, password: hash })
+  const user = await this.create({ firstName, lastName, email, password: hash })
 
   return user
 }
@@ -83,7 +79,6 @@ userSchema.statics.logIn = async function (email: string, password: string) {
 
   return user
 }
-
 
 const User = model<Iuser, IuserMethods>('Users', userSchema)
 
