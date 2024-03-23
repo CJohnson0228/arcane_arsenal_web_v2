@@ -1,5 +1,5 @@
 {
-  "name": "arcane_arsenal_web",
+  "name": "arcane_arsenal_web_v2",
   "version": "1.0.0",
   "description": "A Tabletop RPG player Companion App",
   "main": "index.js",
@@ -10,13 +10,9 @@
     "server": "npm run app --prefix server"
   },
   "keywords": [
-    "dungeons",
-    "&",
-    "dragons",
+    "dungeons_&_dragons",
     "pathfinder",
-    "the",
-    "one",
-    "ring",
+    "the_one_ring",
     "starfinder",
     "shadowrun",
     "games",
