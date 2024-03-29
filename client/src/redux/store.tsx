@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userReducer from './User'
 import AppStatusReducer from './AppStatus'
+import CharactersReducer from './Characters'
+import userReducer from './User'
 
 const store = configureStore({
   reducer: {
     user: userReducer,
-    appState: AppStatusReducer
+    appState: AppStatusReducer,
+    characters: CharactersReducer,
   },
 })
 

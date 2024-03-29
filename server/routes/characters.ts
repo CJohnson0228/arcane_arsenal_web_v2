@@ -1,17 +1,20 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 import {
   createCharacter,
-  getAllCharacters,
-  getSingleCharacter,
   deleteCharacter,
-  updateCharacter
+  getAllCharacters,
+  getMyCharacters,
+  getSingleCharacter,
+  updateCharacter,
 } from '../controllers/characterController'
-
 
 const router = express.Router()
 
 // === Get all Characters
 router.get('/', getAllCharacters)
+
+// === Get all of my Characters
+router.get('/mycharacters/:uid', getMyCharacters)
 
 // === Get specific Character
 router.get('/:id', getSingleCharacter)
@@ -24,6 +27,5 @@ router.delete('/:id', deleteCharacter)
 
 // === UPDATE a character
 router.patch('/:id', updateCharacter)
-
 
 export default router

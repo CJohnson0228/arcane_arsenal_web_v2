@@ -1,8 +1,6 @@
 import styled from '@emotion/styled'
-import LeftBar from '../components/MainLayout/LeftBar'
-import MainWindow from '../components/MainLayout/MainWindow'
-import RightBar from '../components/MainLayout/RightBar'
-import TopBar from '../components/MainLayout/TopBar'
+import { Outlet } from 'react-router-dom'
+import TopBar from '../components/TopBar'
 import { colors } from '../style/style.constants'
 
 const Container = styled.div({
@@ -17,13 +15,18 @@ const Container = styled.div({
   backgroundPosition: 'center',
 })
 
+const MainWindow = styled.div({
+  margin: '90px auto 0',
+  maxWidth: 1128,
+})
+
 const MainLayout = () => {
   return (
     <Container className='content'>
       <TopBar />
-      <RightBar />
-      <LeftBar />
-      <MainWindow />
+      <MainWindow>
+        <Outlet />
+      </MainWindow>
     </Container>
   )
 }
